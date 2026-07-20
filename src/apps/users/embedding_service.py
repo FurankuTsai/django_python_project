@@ -13,3 +13,11 @@ class EmbeddingService:
         embeddings = self.model.embed([text])
 
         return list(embeddings)[0].tolist()
+    
+    def search_users(self, keyword):
+
+        vector = self.embedding.create(keyword)
+    
+        result = self.vector_repo.search(vector)
+    
+        return result

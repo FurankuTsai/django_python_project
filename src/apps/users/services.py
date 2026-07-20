@@ -47,3 +47,12 @@ class UserService:
     def delete_user(self, user_id: int):
         user = self.get_user(user_id)
         self.repo.delete(user)
+
+    def search_users(self, keyword):
+        # 1. 搜尋文字轉向量
+        vector = self.embedding.create(keyword)
+
+        # 2. 去 Qdrant 找相似資料
+        result = self.vector_repo.search(vector)
+
+        return result

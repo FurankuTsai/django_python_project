@@ -19,3 +19,20 @@ class VectorRepository:
                 )
             ]
         )
+
+    def search(self, vector, limit=5):
+    
+        result = client.query_points(
+            collection_name="users",
+            query=vector,
+            limit=limit
+        )
+    
+        return [
+            {
+                "id": point.id,
+                "score": point.score,
+                "payload": point.payload
+            }
+            for point in result.points
+        ]

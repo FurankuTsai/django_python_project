@@ -49,3 +49,21 @@ class UserView(View):
             return JsonResponse({}, status=204)
         except ValueError as e:
             return JsonResponse({"error": str(e)}, status=404)
+        
+class UserSearchView(View):
+
+    service = UserService()
+
+    def get(self, request):
+
+        keyword = request.GET.get("q")
+
+        if not keyword:
+            return JsonResponse(
+                {"error": "q is required"},
+                status=400
+            )
+
+        result = self.service.search_users(keyword)
+
+        return JsonResponse(result, safe=False)
