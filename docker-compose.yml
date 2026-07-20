@@ -7,6 +7,7 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./src:/app
+      - model_cache:/root/.cache      
     ports:
       - "8000:8000"
     environment:
@@ -15,9 +16,14 @@ services:
       - DB_NAME=django_db
       - DB_USER=root
       - DB_PASSWORD=123456
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      #- OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
       - db
+      - qdrant
     restart: unless-stopped
+
 
   db:
     image: mysql:8.0
@@ -31,5 +37,16 @@ services:
       - db_data:/var/lib/mysql
     restart: unless-stopped
 
+  qdrant:
+    image: qdrant/qdrant
+    container_name: qdrant_db
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
 volumes:
   db_data:
+  qdrant_data:
+  model_cache:

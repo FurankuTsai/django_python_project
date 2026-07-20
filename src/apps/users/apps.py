@@ -2,4 +2,10 @@ from django.apps import AppConfig
 
 
 class UsersConfig(AppConfig):
-    name = 'apps.users'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.users"
+
+    def ready(self):
+        from .qdrant import init_collection
+
+        init_collection()

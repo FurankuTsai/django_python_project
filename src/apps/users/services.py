@@ -1,9 +1,13 @@
 from .repositories import UserRepository
+from .embedding_service import EmbeddingService
+from .vector_repository import VectorRepository
 
 class UserService:
     def __init__(self):
         self.repo = UserRepository()
-
+        self.embedding = EmbeddingService()
+        self.vector_repo = VectorRepository()
+        
     def list_users(self):
         return self.repo.get_all()
 
@@ -14,8 +18,28 @@ class UserService:
         return user
 
     def create_user(self, data: dict):
-        return self.repo.create(data)
 
+       # 1. 存 MySQL
+       user = self.repo.create(data)
+
+       # 2. 組合要給 AI 的文字
+       text = f"""
+       Name: {user.name}
+       Bio: {user.bio}
+       """
+
+       # 3. 產生向量
+       vector = self.embedding.create(text)
+
+       # 4. 存 Qdrant
+       self.vector_repo.save(
+           user.id,
+           vector,
+           text
+       )
+
+       return user
+    
     def update_user(self, user_id: int, data: dict):
         user = self.get_user(user_id)
         return self.repo.update(user, data)
