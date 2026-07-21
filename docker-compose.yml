@@ -22,6 +22,7 @@ services:
     depends_on:
       - db
       - qdrant
+      - ollama
     restart: unless-stopped
 
 
@@ -46,7 +47,17 @@ services:
       - qdrant_data:/qdrant/storage
     restart: unless-stopped
 
+  ollama:
+    image: ollama/ollama
+    container_name: ollama_llm
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
 volumes:
   db_data:
   qdrant_data:
   model_cache:
+  ollama_data:
