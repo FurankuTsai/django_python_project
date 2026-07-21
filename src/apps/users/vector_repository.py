@@ -30,9 +30,8 @@ class VectorRepository:
     
         return [
             {
-                "id": point.id,
-                "score": point.score,
-                "payload": point.payload
+                "user_id": point.id,
+                "score": point.score
             }
             for point in result.points
         ]

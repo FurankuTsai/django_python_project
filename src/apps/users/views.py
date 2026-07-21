@@ -66,4 +66,7 @@ class UserSearchView(View):
 
         result = self.service.search_users(keyword)
 
-        return JsonResponse(result, safe=False)
+        return JsonResponse({
+            "query": keyword,
+            "results": result
+        })

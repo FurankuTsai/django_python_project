@@ -49,10 +49,26 @@ class UserService:
         self.repo.delete(user)
 
     def search_users(self, keyword):
-        # 1. 搜尋文字轉向量
+
+        # 1. keyword 轉向量
         vector = self.embedding.create(keyword)
 
-        # 2. 去 Qdrant 找相似資料
-        result = self.vector_repo.search(vector)
+        # 2. Qdrant 搜尋
+        results = self.vector_repo.search(vector)
 
-        return result
+        users = []
+
+        # 3. 回 MySQL 查資料
+        for item in results:
+
+            user = self.repo.get_by_id(item["user_id"])
+
+            users.append({
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "bio": user.bio,
+                "score": item["score"]
+            })
+
+        return users
